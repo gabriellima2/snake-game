@@ -11,46 +11,39 @@ const areaLimit = {
     y: (canvas.height / standardSize.height).toFixed(1)
 };
 
-const endGameScreen = {
-    area: document.querySelector('.end-game'),
-    button: document.querySelector('.end-game-btn'),
+console.log(areaLimit)
 
-    handle() {
-        this.area.classList.toggle('active');
-    },
+const endGameScreen = document.querySelector('.end-game');
+document.querySelector('.end-game-btn').addEventListener('click', () => document.location.reload())
 
-    btnEvent() {
-        this.button.addEventListener('click', () => document.location.reload());
-    }
+function handleEndGameScreen() {
+    endGameScreen.classList.toggle('active');
 };
-endGameScreen.btnEvent();
 
-class Fruit {
-    constructor() {
-        this.position = {
-            x: 20,
-            y: 20
-        };
-        this.size = {
-            width: standardSize.width,
-            height: standardSize.height
-        };
-        this.spawnArea = {
-            x: areaLimit.x,
-            y: areaLimit.y
-        };
-    };
+const fruit = {
+    position: {
+        x: 20,
+        y: 20
+    },
+    size: {
+        width: standardSize.width,
+        height: standardSize.height
+    },
+    spawnArea: {
+        x: areaLimit.x,
+        y: areaLimit.y
+    },
 
     draw() {
         ctx.fillStyle = 'red';
         ctx.fillRect(this.position.x * standardSize.width, this.position.y * standardSize.height,
             this.size.width, this.size.height);
-    };
+    },
 
     changePosition() {
         this.position.x = Math.floor( Math.random() * this.spawnArea.x );
         this.position.y = Math.floor( Math.random() * this.spawnArea.y );
-    };
+    },
 };
 
 const snake = {
@@ -136,14 +129,13 @@ const snake = {
     },
 
     gameOver() {
-        endGameScreen.handle();
+        handleEndGameScreen();
         this.movement.x = 0;
         this.movement.y = 0;
     }
 };
 document.addEventListener('keydown', snake.control.bind(snake));
 
-const fruit = new Fruit;
 
 function loop() {
     const reachedLimit = snake.move();
