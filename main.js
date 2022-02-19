@@ -2,16 +2,14 @@ const canvas = document.querySelector('#canvas');
 const ctx = canvas.getContext('2d');
 
 const standardSize = {
-    width: 11,
-    height: 8
+    width: 10.5,
+    height: 7.5
 };
 
 const areaLimit = {
-    x: (canvas.width / standardSize.width).toFixed(1),
-    y: (canvas.height / standardSize.height).toFixed(1)
+    x: (canvas.width / standardSize.width).toFixed(0),
+    y: (canvas.height / standardSize.height).toFixed(0)
 };
-
-console.log(areaLimit)
 
 const endGameScreen = document.querySelector('.end-game');
 document.querySelector('.end-game-btn').addEventListener('click', () => document.location.reload())
@@ -61,7 +59,54 @@ const snake = {
     },
     movement: {
         x: 0,
-        y: 0
+        y: 0,
+        init: false
+    },
+
+
+    keys: {
+        x: {
+            ArrowLeft: {
+                clicked: false,
+                action() {
+                    snake.movement.x = -snake.speed;
+                    snake.movement.y = 0;
+                }
+            },
+            ArrowRight: {
+                clicked: false,
+                action() {
+                    snake.movement.x = snake.speed;
+                    snake.movement.y = 0;
+                }
+            },
+            standardValues() {
+                this.ArrowLeft.clicked = false;
+                this.ArrowRight.clicked = false;
+            }
+        },
+
+    
+        y: {
+            ArrowUp: {
+                clicked: false,
+                action() {
+                    snake.movement.x = 0;
+                    snake.movement.y = -snake.speed;
+                }
+            },
+            ArrowDown: {
+                clicked: false,
+                action() {
+                    snake.movement.x = 0;
+                    snake.movement.y = snake.speed;
+                }
+            },
+            standardValues() {
+                this.ArrowUp.clicked = false;
+                this.ArrowDown.clicked = false;
+            }
+        },
     },
     speed: 1,
 
@@ -70,6 +115,9 @@ const snake = {
         this.body.parts.forEach( part => {
             ctx.fillRect(part.x * standardSize.width, part.y * standardSize.height, 
                 this.size.width, this.size.height);
+            if ( part.x === this.position.x && part.y === this.position.y && this.movement.init) {
+                this.gameOver();
+            };
         });
         this.updateBody();
     },
@@ -92,25 +140,26 @@ const snake = {
     },
 
     control({ key }) {
-        switch( key ) {
-            case 'ArrowLeft':
-                this.movement.x = -this.speed;
-                this.movement.y = 0;
-                break;
-            case 'ArrowRight':
-                this.movement.x = this.speed;
-                this.movement.y = 0;
-                break;
-            case 'ArrowUp':
-                this.movement.x = 0;
-                this.movement.y = -this.speed;
-                break;
-            case 'ArrowDown':
-                this.movement.x = 0;
-                this.movement.y = this.speed;
-                break;
-            default:
-                break;
+        if ( !this.movement.init ) {
+            this.movement.init = true;
+        };
+
+        let keyAxis = undefined;
+        if ( key === 'ArrowLeft' || key === 'ArrowRight' ) {
+            keyAxis = 'x';
+
+        } else if ( key === 'ArrowUp' || key === 'ArrowDown' ) {
+            keyAxis = 'y';
+        };
+
+        if ( !this.keys[keyAxis][key].clicked ) {
+            this.keys.x.standardValues();
+            this.keys.y.standardValues();
+            
+            this.keys[keyAxis][key].action();
+            for ( value in this.keys[keyAxis] ) {
+                this.keys[keyAxis][value].clicked = true;
+            };
         };
     },
 
@@ -118,11 +167,11 @@ const snake = {
         this.position.x += this.movement.x;
         this.position.y += this.movement.y;
 
-        if ( this.position.x < 0 || this.position.x > areaLimit.x ) {
+        if ( this.position.x < 0 || this.position.x >= areaLimit.x ) {
             return true;
         };
 
-        if ( this.position.y < 0 || this.position.y > areaLimit.y ) {
+        if ( this.position.y < 0 || this.position.y >= areaLimit.y ) {
             return true;
         };
         return false;
@@ -130,6 +179,7 @@ const snake = {
 
     gameOver() {
         handleEndGameScreen();
+        clearInterval(time);
         this.movement.x = 0;
         this.movement.y = 0;
     }
@@ -149,7 +199,6 @@ function loop() {
 
     if ( reachedLimit ) {
         snake.gameOver();
-        clearInterval(time);
     };
 };
 const time = setInterval(loop, 65);
