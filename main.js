@@ -6,6 +6,11 @@ const standardSize = {
     height: 8
 };
 
+const areaLimit = {
+    x: canvas.width / standardSize.width,
+    y: canvas.height / standardSize.height
+};
+
 class Fruit {
     constructor() {
         this.position = {
@@ -17,29 +22,24 @@ class Fruit {
             height: standardSize.height - 1
         };
         this.spawnArea = {
-            x: canvas.width / this.position,
-            y: canvas.height / this.position
+            x: areaLimit.x,
+            y: areaLimit.y
         };
     };
 
     draw() {
         ctx.fillStyle = 'red';
         ctx.fillRect(this.position.x * standardSize.width, this.position.y * standardSize.height,
-        this.size.width, this.size.height);
+            this.size.width, this.size.height);
     };
 
     changePosition() {
-        this.position.x = Math.floor( Math.random() * 20 );
-        this.position.y = Math.floor( Math.random() * 20 );
+        this.position.x = Math.floor( Math.random() * this.spawnArea.x );
+        this.position.y = Math.floor( Math.random() * this.spawnArea.y );
     };
 };
 
 const snake = {
-    speed: {
-        standard: 1,
-        x: 0,
-        y: 0
-    },
     position: {
         x: 15,
         y: 15
@@ -50,14 +50,19 @@ const snake = {
     },
     body: {
         parts: [],
-        total: 2
+        total: 1
     },
+    movement: {
+        x: 0,
+        y: 0
+    },
+    speed: 1,
 
     draw() {
         ctx.fillStyle = 'black';
         this.body.parts.forEach( part => {
             ctx.fillRect(part.x * standardSize.width, part.y * standardSize.height, 
-            this.size.width, this.size.height);
+                this.size.width, this.size.height);
         });
         this.updateBody();
     },
@@ -79,40 +84,44 @@ const snake = {
         };
     },
 
-    move({ key }) {
+    control({ key }) {
         switch( key ) {
             case 'ArrowLeft':
-                this.speed.x = -this.speed.standard;
-                this.speed.y = 0;
+                this.movement.x = -this.speed;
+                this.movement.y = 0;
                 break;
             case 'ArrowRight':
-                this.speed.x = this.speed.standard;
-                this.speed.y = 0;
+                this.movement.x = this.speed;
+                this.movement.y = 0;
                 break;
             case 'ArrowUp':
-                this.speed.x = 0;
-                this.speed.y = -this.speed.standard;
+                this.movement.x = 0;
+                this.movement.y = -this.speed;
                 break;
             case 'ArrowDown':
-                this.speed.x = 0;
-                this.speed.y = this.speed.standard;
+                this.movement.x = 0;
+                this.movement.y = this.speed;
                 break;
             default:
                 break;
         };
+    },
+
+    move() {
+        this.position.x += this.movement.x;
+        this.position.y += this.movement.y;
     }
 };
-document.addEventListener('keydown', snake.move.bind(snake));
+document.addEventListener('keydown', snake.control.bind(snake));
 
 const fruit = new Fruit;
-console.log(fruit)
 
 function loop() {
-    snake.position.x += snake.speed.x;
-    snake.position.y += snake.speed.y;
+    snake.move();
 
     ctx.fillStyle = '#ccc';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     snake.draw();
     fruit.draw();
     snake.eatFruit();
