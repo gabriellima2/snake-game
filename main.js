@@ -7,9 +7,23 @@ const standardSize = {
 };
 
 const areaLimit = {
-    x: Math.floor(canvas.width / standardSize.width),
-    y: Math.floor(canvas.height / standardSize.height)
+    x: (canvas.width / standardSize.width).toFixed(1),
+    y: (canvas.height / standardSize.height).toFixed(1)
 };
+
+const endGameScreen = {
+    area: document.querySelector('.end-game'),
+    button: document.querySelector('.end-game-btn'),
+
+    handle() {
+        this.area.classList.toggle('active');
+    },
+
+    btnEvent() {
+        this.button.addEventListener('click', () => document.location.reload());
+    }
+};
+endGameScreen.btnEvent();
 
 class Fruit {
     constructor() {
@@ -18,8 +32,8 @@ class Fruit {
             y: 20
         };
         this.size = {
-            width: standardSize.width - 1,
-            height: standardSize.height - 1
+            width: standardSize.width,
+            height: standardSize.height
         };
         this.spawnArea = {
             x: areaLimit.x,
@@ -41,12 +55,12 @@ class Fruit {
 
 const snake = {
     position: {
-        x: 15,
-        y: 15
+        x: 10,
+        y: 10
     },
     size: {
-        width: standardSize.width - 1,
-        height: standardSize.height - 1
+        width: standardSize.width ,
+        height: standardSize.height 
     },
     body: {
         parts: [],
@@ -63,10 +77,6 @@ const snake = {
         this.body.parts.forEach( part => {
             ctx.fillRect(part.x * standardSize.width, part.y * standardSize.height, 
                 this.size.width, this.size.height);
-
-            if ( this.position.x === part.x && this.position.y === part.y ) {
-                this.died();
-            };
         });
         this.updateBody();
     },
@@ -114,17 +124,21 @@ const snake = {
     move() {
         this.position.x += this.movement.x;
         this.position.y += this.movement.y;
-    },
 
-    died() {
-        if ( this.movement.x > 0 || this.movement.y > 0 ) {
-            this.gameOver();
+        if ( this.position.x < 0 || this.position.x > areaLimit.x ) {
+            return true;
+        };
+
+        if ( this.position.y < 0 || this.position.y > areaLimit.y ) {
+            return true;
         };
         return false;
     },
 
     gameOver() {
-        console.log('gameOver');
+        endGameScreen.handle();
+        this.movement.x = 0;
+        this.movement.y = 0;
     }
 };
 document.addEventListener('keydown', snake.control.bind(snake));
@@ -132,7 +146,7 @@ document.addEventListener('keydown', snake.control.bind(snake));
 const fruit = new Fruit;
 
 function loop() {
-    snake.move();
+    const reachedLimit = snake.move();
 
     ctx.fillStyle = '#ccc';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -140,5 +154,10 @@ function loop() {
     snake.draw();
     fruit.draw();
     snake.eatFruit();
+
+    if ( reachedLimit ) {
+        snake.gameOver();
+        clearInterval(time);
+    };
 };
-setInterval(loop, 65);
+const time = setInterval(loop, 65);

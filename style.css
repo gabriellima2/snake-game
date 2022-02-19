@@ -1,15 +1,58 @@
 body {
     width: 100vw;
     height: 100vh;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
 }
 
 #canvas {
     width: 700px;
     height: 600px;
     border: 2px solid gray;
-    box-sizing: border-box;
+}
+
+.end-game {
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+    z-index: 1000;
+
+    display: none;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.end-game > h1 {
+    font-size: 3em;
+    font-family: Tahoma, sans-serif;
+    text-transform: uppercase;
+    color: #831414;
+}
+
+.end-game-btn {
+    padding: 15px;
+    border: none;
+
+    font-size: 1.2em;
+
+    background-color: #72c96a;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.end-game-btn:hover {
+    background-color: #72c96ac2;
+}
+
+.end-game.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
 }
