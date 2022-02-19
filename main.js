@@ -7,8 +7,8 @@ const standardSize = {
 };
 
 const areaLimit = {
-    x: canvas.width / standardSize.width,
-    y: canvas.height / standardSize.height
+    x: Math.floor(canvas.width / standardSize.width),
+    y: Math.floor(canvas.height / standardSize.height)
 };
 
 class Fruit {
@@ -50,7 +50,7 @@ const snake = {
     },
     body: {
         parts: [],
-        total: 1
+        total: 2
     },
     movement: {
         x: 0,
@@ -63,13 +63,17 @@ const snake = {
         this.body.parts.forEach( part => {
             ctx.fillRect(part.x * standardSize.width, part.y * standardSize.height, 
                 this.size.width, this.size.height);
+
+            if ( this.position.x === part.x && this.position.y === part.y ) {
+                this.died();
+            };
         });
         this.updateBody();
     },
 
     updateBody() {
         this.body.parts.push({
-            x: snake.position.x, 
+            x: snake.position.x,
             y: snake.position.y
         });
         while( this.body.parts.length > this.body.total) {
@@ -110,6 +114,17 @@ const snake = {
     move() {
         this.position.x += this.movement.x;
         this.position.y += this.movement.y;
+    },
+
+    died() {
+        if ( this.movement.x > 0 || this.movement.y > 0 ) {
+            this.gameOver();
+        };
+        return false;
+    },
+
+    gameOver() {
+        console.log('gameOver');
     }
 };
 document.addEventListener('keydown', snake.control.bind(snake));
