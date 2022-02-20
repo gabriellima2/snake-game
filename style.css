@@ -1,20 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+    --font: 'Press Start 2P', cursive;
+}
+
 body {
     width: 100vw;
     height: 100vh;
 
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
 
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+
+    font-family: var(--font);
+    background: linear-gradient(125deg, #0099aa 10%, #1a5b63 100%);
+}
+
+#text-animate {
+    text-transform: uppercase;
+    color: #ffffff9a;
+    letter-spacing: 2px;
+    font-size: 1.8em;
+
+    position: absolute;
+
+    opacity: 0;
+    animation: blink 0.5s ease-in infinite alternate;
+}
+
+@keyframes blink {
+    to {
+        opacity: 1;
+    }
+}
+
+#text-animate.del {
+    display: none;
 }
 
 #canvas {
     width: 700px;
     height: 600px;
-    border: 2px solid gray;
+    border: 2px solid #00DCF5;
+}
+
+#game-score, #top-score-current {
+    position: absolute;
+    top: 22%;
+    right: 7%;
+
+    color: #0099aa8a;
+    font-size: 1.8em;
+    text-transform: uppercase;
+}
+
+#game-score {
+    right: 7%;
+}
+
+#top-score-current {
+    left: 7%;
 }
 
 .end-game {
@@ -25,34 +75,70 @@ body {
     z-index: 1000;
 
     display: none;
+
+    font-family: var(--font);
     background-color: rgba(0, 0, 0, 0.5);
-}
-
-.end-game > h1 {
-    font-size: 3em;
-    font-family: Tahoma, sans-serif;
-    text-transform: uppercase;
-    color: #831414;
-}
-
-.end-game-btn {
-    padding: 15px;
-    border: none;
-
-    font-size: 1.2em;
-
-    background-color: #72c96a;
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-
-.end-game-btn:hover {
-    background-color: #72c96ac2;
 }
 
 .end-game.active {
     display: flex;
-    flex-direction: column;
-    justify-content: space-around;
     align-items: center;
+    justify-content: center;
+}
+
+#area-items {
+    width: 500px;
+    height: 300px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 20px;
+    border: 2px solid #F74A6C;
+    border-radius: 5px;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3);
+
+    background-color: #1c1c1cc9;
+}
+
+#area-items > h1 {
+    font-size: 2.2em;
+    color: #ff2953;
+}
+
+#end-score-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.score-items {
+    font-size: 1.3em;
+    color: #fff;
+}
+
+.score-items.current {
+    color: #ffee00;
+}
+
+#btn-play-again {
+    padding: 17px 20px;
+    border: none;
+    border-radius: inherit;
+
+    font-family: var(--font);
+    font-size: 0.7em;
+    color: #003618;
+
+    background-color: #00C254;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+#btn-play-again:hover {
+    background-color: #00c254b9;
+    color: #005326;
 }

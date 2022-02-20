@@ -8,11 +8,30 @@
 </head>
 <body>
     
+    <h1 id="text-animate">Click Arrows</h1>
+    <span id="game-score">0</span>
+    <span id="top-score-current">TOP:</span>
+    
     <canvas id="canvas" width="400" height="250"></canvas>
 
     <div class="end-game">
-        <h1>Game Over!</h1>
-        <button class="end-game-btn">Jogar Novamente!</button>
+        <div id="area-items">
+            <h1>Game Over!</h1>
+            <div id="end-score-area">
+
+                <div>
+                    <span class="score-items current">CURRENT SCORE: </span>
+                    <span class="score-items current" id="end-game-score">0</span>
+                </div>
+
+                <div>
+                    <span class="score-items">TOP SCORE: </span>
+                    <span class="score-items" id="top-score">2</span>
+                </div>
+
+            </div>
+            <button id="btn-play-again">PLAY AGAIN</button>
+        </div>
     </div>
 
     <script src="main.js"></script>

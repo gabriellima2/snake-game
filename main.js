@@ -1,3 +1,33 @@
+const endGameScreen = document.querySelector('.end-game');
+document.querySelector('#btn-play-again').addEventListener('click',
+    () => document.location.reload());
+
+function handleEndGameScreen() {
+    endGameScreen.classList.toggle('active');
+
+    document.querySelector('#end-game-score').innerHTML = scoreboard.value.innerHTML;
+
+    const newTopScore = storage();
+    document.querySelector('#top-score').innerHTML = newTopScore;
+};
+
+function storage() {
+    const topScore = localStorage.getItem('topScore');
+    const currentValue = scoreboard.value.innerHTML;
+
+    if ( topScore ) {
+        if ( currentValue < topScore || currentValue === topScore ) {
+            return topScore;
+        };
+    };
+
+    // Adicionar o valor atual como recorde!
+    localStorage.clear();
+    localStorage.setItem('topScore', currentValue);
+    return currentValue;
+};
+
+
 const canvas = document.querySelector('#canvas');
 const ctx = canvas.getContext('2d');
 
@@ -11,12 +41,25 @@ const areaLimit = {
     y: (canvas.height / standardSize.height).toFixed(0)
 };
 
-const endGameScreen = document.querySelector('.end-game');
-document.querySelector('.end-game-btn').addEventListener('click', () => document.location.reload())
+const scoreboard = {
+    value: document.querySelector('#game-score'),
 
-function handleEndGameScreen() {
-    endGameScreen.classList.toggle('active');
+    handle() {
+        let number = Number(this.value.innerHTML);
+        this.value.innerHTML = number + 1;
+    }
 };
+
+const topScoreBoard = {
+    value: document.querySelector('#top-score-current'),
+
+    handle() {
+        const valueTopScore = localStorage.getItem('topScore');
+
+        this.value.innerHTML += valueTopScore ? valueTopScore : 0;
+    }
+};
+topScoreBoard.handle();
 
 const fruit = {
     position: {
@@ -34,8 +77,11 @@ const fruit = {
 
     draw() {
         ctx.fillStyle = 'red';
-        ctx.fillRect(this.position.x * standardSize.width, this.position.y * standardSize.height,
-            this.size.width, this.size.height);
+
+        ctx.fillRect(this.position.x * standardSize.width,
+            this.position.y * standardSize.height,
+            this.size.width,
+            this.size.height);
     },
 
     changePosition() {
@@ -50,20 +96,18 @@ const snake = {
         y: 10
     },
     size: {
-        width: standardSize.width ,
-        height: standardSize.height 
+        width: standardSize.width-1 ,
+        height: standardSize.height-1 
     },
     body: {
         parts: [],
-        total: 2
+        total: 1
     },
     movement: {
         x: 0,
         y: 0,
         init: false
     },
-
-
     keys: {
         x: {
             ArrowLeft: {
@@ -111,10 +155,13 @@ const snake = {
     speed: 1,
 
     draw() {
-        ctx.fillStyle = 'black';
+        ctx.fillStyle = '#00F578';
+
         this.body.parts.forEach( part => {
             ctx.fillRect(part.x * standardSize.width, part.y * standardSize.height, 
                 this.size.width, this.size.height);
+
+            // Verificar se alguma parte da cobra encostou nela mesma!
             if ( part.x === this.position.x && part.y === this.position.y && this.movement.init) {
                 this.gameOver();
             };
@@ -123,10 +170,12 @@ const snake = {
     },
 
     updateBody() {
+        // Para fazer o movimento visual, adiciona uma peça no começo e retira a do final!
         this.body.parts.push({
             x: snake.position.x,
             y: snake.position.y
         });
+
         while( this.body.parts.length > this.body.total) {
             this.body.parts.shift();
         };
@@ -136,30 +185,37 @@ const snake = {
         if ( fruit.position.x === this.position.x && fruit.position.y === this.position.y ) {
             this.body.total++;
             fruit.changePosition();
+            scoreboard.handle();
         };
     },
 
     control({ key }) {
-        if ( !this.movement.init ) {
-            this.movement.init = true;
+        const verifyKeyAxis = keyAxis => {
+
+            // Para quando clicar nas teclas do mesmo eixo não surtir efeito!
+            if ( !this.keys[keyAxis][key].clicked ) {
+                this.keys.x.standardValues();
+                this.keys.y.standardValues();
+                
+                this.keys[keyAxis][key].action();
+                for ( value in this.keys[keyAxis] ) {
+                    this.keys[keyAxis][value].clicked = true;
+                };
+            };
         };
 
-        let keyAxis = undefined;
         if ( key === 'ArrowLeft' || key === 'ArrowRight' ) {
-            keyAxis = 'x';
+            verifyKeyAxis('x');
 
         } else if ( key === 'ArrowUp' || key === 'ArrowDown' ) {
-            keyAxis = 'y';
+            verifyKeyAxis('y');
+        } else {
+            return;
         };
 
-        if ( !this.keys[keyAxis][key].clicked ) {
-            this.keys.x.standardValues();
-            this.keys.y.standardValues();
-            
-            this.keys[keyAxis][key].action();
-            for ( value in this.keys[keyAxis] ) {
-                this.keys[keyAxis][value].clicked = true;
-            };
+        if ( !this.movement.init ) {
+            this.movement.init = true;
+            document.querySelector('#text-animate').classList.add('del');
         };
     },
 
@@ -190,7 +246,7 @@ document.addEventListener('keydown', snake.control.bind(snake));
 function loop() {
     const reachedLimit = snake.move();
 
-    ctx.fillStyle = '#ccc';
+    ctx.fillStyle = '#002e33';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     snake.draw();
