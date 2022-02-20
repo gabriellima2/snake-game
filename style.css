@@ -49,10 +49,15 @@ body {
     border: 2px solid #00DCF5;
 }
 
+#score-during-game {
+    width: 700px;
+    position: relative;
+    top: 30px;
+}
+
 #game-score, #top-score-current {
     position: absolute;
-    top: 22%;
-    right: 7%;
+    top: 24%;
 
     color: #0099aa8a;
     font-size: 1.8em;
@@ -60,11 +65,11 @@ body {
 }
 
 #game-score {
-    right: 7%;
+    right: 3%;
 }
 
 #top-score-current {
-    left: 7%;
+    left: 3%;
 }
 
 .end-game {
