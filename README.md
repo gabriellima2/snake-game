@@ -1,19 +1,13 @@
 <h1>Snake Game</h1>
 
-Fiz esse projeto para praticar Javascript. Utilizei o [Canvas do HTML](https://developer.mozilla.org/pt-BR/docs/Web/API/Canvas_API/Tutorial),
-foi bem legal de criar, nunca tinha usado o canvas nem mesmo codado um jogo simples.
-
-<h2></h2>
+Projeto do famoso "Jogo da Cobrinha". Útil para passa-tempo.
+Focado em praticar Javascript Puro e Lògica.
 
 <h2>Imagens: </h2>
 
 <img src="./img/img1.png">
 
-<h2></h2>
-
 <img src="./img/img2.png">
-
-<h2></h2>
 
 <img src="./img/img3.png">
 
@@ -37,3 +31,5 @@ $ git clone https://github.com/gabriellima2/snake-game.git
 2. Acesse a pasta e clique no index.html
 
 ```
+
+<p align="center">Feito com 💙 por <a href="https://www.linkedin.com/in/gabriel-lima-860612236">Gabriel Lima</a></p>
